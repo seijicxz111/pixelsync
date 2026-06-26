@@ -42,7 +42,7 @@ export default async function SignInPage({
                   redirectTo: "/dashboard"
                 });
               } catch (signInError) {
-                if (isRedirectError(signInError)) {
+                if (getRedirectTarget(signInError)?.startsWith("/dashboard")) {
                   throw signInError;
                 }
 
@@ -82,12 +82,16 @@ export default async function SignInPage({
   );
 }
 
-function isRedirectError(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "digest" in error &&
-    typeof error.digest === "string" &&
-    error.digest.startsWith("NEXT_REDIRECT")
-  );
+function getRedirectTarget(error: unknown): string | null {
+  if (
+    typeof error !== "object" ||
+    error === null ||
+    !("digest" in error) ||
+    typeof error.digest !== "string" ||
+    !error.digest.startsWith("NEXT_REDIRECT")
+  ) {
+    return null;
+  }
+
+  return error.digest.split(";")[2] ?? null;
 }
