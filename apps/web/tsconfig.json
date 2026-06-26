@@ -1,0 +1,40 @@
+{
+  "extends": "../../packages/config/tsconfig/next.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@pixelsync/shared": [
+        "../../packages/shared/src/index.ts"
+      ],
+      "@pixelsync/shared/*": [
+        "../../packages/shared/src/*"
+      ],
+      "@pixelsync/ui": [
+        "../../packages/ui/src/index.ts"
+      ],
+      "@pixelsync/ui/*": [
+        "../../packages/ui/src/*"
+      ]
+    },
+    "types": [
+      "node",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ],
+    "incremental": true
+  },
+  "include": [
+    "*.config.mjs",
+    "*.config.ts",
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

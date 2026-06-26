@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@pixelsync/shared": ["packages/shared/src/index.ts"],
+      "@pixelsync/shared/*": ["packages/shared/src/*"],
+      "@pixelsync/ui": ["packages/ui/src/index.ts"],
+      "@pixelsync/ui/*": ["packages/ui/src/*"]
+    }
+  }
+}

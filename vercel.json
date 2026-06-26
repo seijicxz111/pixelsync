@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm build --filter=@pixelsync/web",
+  "installCommand": "corepack enable && pnpm install",
+  "framework": "nextjs"
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "../../packages/config/tsconfig/node.json",
+  "compilerOptions": {
+    "rootDir": "../..",
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@pixelsync/shared": ["../../packages/shared/src/index.ts"],
+      "@pixelsync/shared/*": ["../../packages/shared/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
+}

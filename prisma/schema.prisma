@@ -1,0 +1,236 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ProjectVisibility {
+  PRIVATE
+  LINK
+  PUBLIC
+}
+
+enum ProjectRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum BackgroundMode {
+  TRANSPARENT
+  SOLID
+  CHECKERBOARD
+}
+
+enum OperationType {
+  PIXELS_SET
+  CANVAS_CLEAR
+  CANVAS_RESIZE
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  ownedProjects Project[]         @relation("ProjectOwner")
+  memberships   ProjectMember[]
+  snapshots     CanvasSnapshot[]  @relation("SnapshotCreator")
+  operations    CanvasOperation[]
+  versions      CanvasVersion[]   @relation("VersionCreator")
+  invites       Invite[]          @relation("InviteCreator")
+  activityLogs  ActivityLog[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Project {
+  id           String            @id @default(cuid())
+  ownerId      String
+  name         String
+  description  String?
+  visibility   ProjectVisibility @default(PRIVATE)
+  thumbnailUrl String?
+  allowGuests  Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  owner      User            @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members    ProjectMember[]
+  canvases   Canvas[]
+  invites    Invite[]
+  palettes   ProjectPalette[]
+  activities ActivityLog[]
+
+  @@index([ownerId])
+  @@index([visibility, updatedAt])
+}
+
+model ProjectMember {
+  projectId String
+  userId    String
+  role      ProjectRole @default(VIEWER)
+  joinedAt  DateTime    @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+  @@index([userId])
+}
+
+model ProjectPalette {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  colors    String[]
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model Canvas {
+  id                String         @id @default(cuid())
+  projectId         String
+  name              String
+  width             Int
+  height            Int
+  backgroundMode    BackgroundMode @default(CHECKERBOARD)
+  currentSnapshotId String?
+  currentSequence   Int            @default(0)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  project    Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  snapshots  CanvasSnapshot[]
+  operations CanvasOperation[]
+  versions   CanvasVersion[]
+
+  @@index([projectId])
+  @@index([currentSnapshotId])
+}
+
+model CanvasSnapshot {
+  id               String   @id @default(cuid())
+  canvasId         String
+  width            Int
+  height           Int
+  encodedPixelData String
+  sequenceNumber   Int
+  createdById      String?
+  createdAt        DateTime @default(now())
+
+  canvas    Canvas          @relation(fields: [canvasId], references: [id], onDelete: Cascade)
+  createdBy User?           @relation("SnapshotCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  versions  CanvasVersion[]
+
+  @@unique([canvasId, sequenceNumber])
+  @@index([createdById])
+}
+
+model CanvasOperation {
+  id             String        @id
+  canvasId       String
+  userId         String
+  sequenceNumber Int
+  operationType  OperationType
+  payload        Json
+  createdAt      DateTime      @default(now())
+
+  canvas Canvas @relation(fields: [canvasId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([canvasId, sequenceNumber])
+  @@index([userId])
+}
+
+model CanvasVersion {
+  id          String   @id @default(cuid())
+  canvasId    String
+  snapshotId  String
+  label       String
+  description String?
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  canvas    Canvas         @relation(fields: [canvasId], references: [id], onDelete: Cascade)
+  snapshot  CanvasSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  createdBy User?          @relation("VersionCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([canvasId, createdAt])
+}
+
+model Invite {
+  id          String      @id @default(cuid())
+  projectId   String
+  tokenHash   String      @unique
+  role        ProjectRole @default(VIEWER)
+  expiresAt   DateTime
+  createdById String?
+  createdAt   DateTime    @default(now())
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy User?   @relation("InviteCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([expiresAt])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String?
+  action    String
+  metadata  Json
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, createdAt])
+  @@index([userId])
+}
