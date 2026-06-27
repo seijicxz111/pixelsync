@@ -21,9 +21,9 @@ export default async function SignInPage({
 
   return (
     <main className="grid min-h-screen place-items-center bg-slate-950 px-4 text-white">
-      <section className="w-full max-w-md rounded-lg border border-white/10 bg-white/[0.04] p-6 shadow-2xl">
+      <section className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/30">
         <div className="mb-6">
-          <div className="mb-4 grid size-10 place-items-center rounded bg-cyan-300 text-sm font-semibold text-slate-950">
+          <div className="mb-4 grid size-10 place-items-center rounded-2xl bg-cyan-300 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-950/20">
             PX
           </div>
           <h1 className="text-2xl font-semibold">Sign in to PixelSync</h1>
@@ -51,7 +51,7 @@ export default async function SignInPage({
             }}
           >
             {error === "demo-database" ? (
-              <div className="rounded-md border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-sm text-amber-100" role="alert">
+              <div className="rounded-2xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-sm text-amber-100" role="alert">
                 Demo sign-in needs Postgres running on <code>localhost:5432</code>. Start the database, run migrations, then try again.
               </div>
             ) : null}

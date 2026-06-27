@@ -89,7 +89,7 @@ export function NewCanvasForm({ projectId }: { projectId: string }): JSX.Element
               <Label htmlFor="background" className="text-white">Background</Label>
               <select
                 id="background"
-                className="h-10 w-full rounded-md border border-white/10 bg-white/5 px-3 text-sm"
+                className="h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
                 {...form.register("backgroundMode")}
               >
                 <option value="CHECKERBOARD">Checkerboard</option>

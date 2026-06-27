@@ -23,8 +23,8 @@ export function Minimap(): JSX.Element {
   }, [buffer, revision]);
 
   return (
-    <div className="absolute bottom-4 right-4 z-30 rounded border border-white/10 bg-slate-950/90 p-2">
-      <canvas ref={ref} aria-label="Canvas minimap" className="h-28 w-28 object-contain" />
+    <div className="absolute bottom-4 right-4 z-30 rounded-2xl border border-white/10 bg-slate-950/[0.88] p-2 shadow-2xl shadow-black/[0.35] backdrop-blur-xl">
+      <canvas ref={ref} aria-label="Canvas minimap" className="h-28 w-28 rounded-xl object-contain" />
     </div>
   );
 }

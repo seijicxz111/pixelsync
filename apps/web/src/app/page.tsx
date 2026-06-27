@@ -37,7 +37,7 @@ export default function LandingPage(): JSX.Element {
         <section className="relative overflow-hidden bg-slate-950 text-white">
           <div className="mx-auto grid min-h-[calc(100vh-56px)] max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
             <div className="relative z-10 max-w-2xl">
-              <p className="mb-4 inline-flex rounded bg-cyan-300/10 px-3 py-1 text-sm text-cyan-200 ring-1 ring-cyan-300/20">
+              <p className="mb-4 inline-flex rounded-full bg-cyan-300/10 px-3 py-1 text-sm text-cyan-200 ring-1 ring-cyan-300/20">
                 Server-authoritative pixel collaboration
               </p>
               <h1 className="text-4xl font-semibold tracking-normal sm:text-6xl">PixelSync</h1>
@@ -57,22 +57,22 @@ export default function LandingPage(): JSX.Element {
               </div>
             </div>
 
-            <div className="relative z-10 rounded-lg border border-white/10 bg-white/[0.03] p-4 shadow-glow">
+            <div className="relative z-10 rounded-3xl border border-white/10 bg-white/[0.03] p-4 shadow-glow">
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white">Crystal Knight Idle</p>
                   <p className="text-xs text-slate-400">32 x 32 live canvas</p>
                 </div>
                 <div className="flex -space-x-2">
-                  <span className="grid size-8 place-items-center rounded border border-slate-950 bg-cyan-300 text-xs font-semibold text-slate-950">
+                  <span className="grid size-8 place-items-center rounded-xl border border-slate-950 bg-cyan-300 text-xs font-semibold text-slate-950">
                     AD
                   </span>
-                  <span className="grid size-8 place-items-center rounded border border-slate-950 bg-pink-300 text-xs font-semibold text-slate-950">
+                  <span className="grid size-8 place-items-center rounded-xl border border-slate-950 bg-pink-300 text-xs font-semibold text-slate-950">
                     JR
                   </span>
                 </div>
               </div>
-              <div className="grid grid-cols-16 overflow-hidden rounded bg-[linear-gradient(45deg,#1e293b_25%,transparent_25%),linear-gradient(-45deg,#1e293b_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1e293b_75%),linear-gradient(-45deg,transparent_75%,#1e293b_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0] p-4">
+              <div className="grid grid-cols-16 overflow-hidden rounded-2xl bg-[linear-gradient(45deg,#1e293b_25%,transparent_25%),linear-gradient(-45deg,#1e293b_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1e293b_75%),linear-gradient(-45deg,transparent_75%,#1e293b_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0] p-4">
                 <div className="grid aspect-square w-full grid-cols-16 bg-slate-900">
                   {pixels.map((value, index) => (
                     <span key={index} style={{ backgroundColor: palette[value] ?? "transparent" }} />
@@ -83,7 +83,7 @@ export default function LandingPage(): JSX.Element {
           </div>
           <div className="mx-auto -mt-10 grid max-w-7xl grid-cols-1 gap-3 px-4 pb-10 sm:grid-cols-3 sm:px-6 lg:px-8">
             {featureBadges.map(({ label, Icon }) => (
-              <div key={label} className="rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-300">
+              <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-300 shadow-sm shadow-black/20">
                 <Icon className="mb-3 text-cyan-200" size={20} aria-hidden="true" />
                 {label}
               </div>
@@ -97,7 +97,7 @@ export default function LandingPage(): JSX.Element {
             "Socket events are validated by shared Zod schemas and ordered by the realtime server.",
             "Snapshots plus operation logs keep persistence efficient without losing recoverability."
           ].map((text) => (
-            <article key={text} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <article key={text} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-950/5">
               <Sparkles size={20} className="mb-4 text-cyan-600" aria-hidden="true" />
               <p className="text-sm leading-6 text-slate-600">{text}</p>
             </article>

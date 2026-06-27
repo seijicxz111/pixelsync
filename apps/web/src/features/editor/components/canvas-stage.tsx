@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent } from "react";
 import {
+  calculateFitZoom,
   canvasToScreenCoordinate,
   floodFill,
   getPixel,
@@ -34,6 +35,13 @@ type DragState =
   | { mode: "SHAPE"; start: Coordinate; last: Coordinate }
   | { mode: "PAN"; startX: number; startY: number; offsetX: number; offsetY: number };
 
+type ShapePreview = {
+  start: Coordinate;
+  end: Coordinate;
+  tool: "LINE" | "RECTANGLE_OUTLINE" | "RECTANGLE_FILLED";
+  color: number;
+};
+
 export function CanvasStage({
   projectId,
   canvasId,
@@ -42,10 +50,13 @@ export function CanvasStage({
   onOperation,
   onCursorMove
 }: CanvasStageProps): JSX.Element {
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrame = useRef<number | null>(null);
   const dragState = useRef<DragState | null>(null);
+  const userAdjustedView = useRef(false);
   const [viewport, setViewport] = useState({ width: 960, height: 640 });
+  const [shapePreview, setShapePreview] = useState<ShapePreview | null>(null);
   const buffer = useEditorStore((state) => state.buffer);
   const revision = useEditorStore((state) => state.revision);
   const transform = useEditorStore((state) => state.transform);
@@ -102,8 +113,8 @@ export function CanvasStage({
     const ratio = window.devicePixelRatio || 1;
     canvas.width = Math.max(1, Math.floor(viewport.width * ratio));
     canvas.height = Math.max(1, Math.floor(viewport.height * ratio));
-    canvas.style.width = `${viewport.width}px`;
-    canvas.style.height = `${viewport.height}px`;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.imageSmoothingEnabled = false;
     context.clearRect(0, 0, viewport.width, viewport.height);
@@ -127,10 +138,14 @@ export function CanvasStage({
       buffer.height * transform.zoom
     );
 
+    if (shapePreview !== null) {
+      drawShapePreview(context, shapePreview, transform, buffer.width, buffer.height);
+    }
+
     if (gridVisible && transform.zoom >= 6) {
       drawGrid(context, buffer.width, buffer.height, transform);
     }
-  }, [buffer, gridVisible, transform, viewport]);
+  }, [buffer, gridVisible, shapePreview, transform, viewport]);
 
   useEffect(() => {
     const startedAt = performance.now();
@@ -148,8 +163,8 @@ export function CanvasStage({
   }, [render, revision, setFps]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas === null) {
+    const stage = stageRef.current;
+    if (stage === null) {
       return;
     }
 
@@ -165,9 +180,22 @@ export function CanvasStage({
       });
     });
 
-    observer.observe(canvas);
+    observer.observe(stage);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (userAdjustedView.current || viewport.width <= 0 || viewport.height <= 0) {
+      return;
+    }
+
+    const zoom = calculateFitZoom(viewport, buffer, 56);
+    setTransform({
+      zoom,
+      offsetX: Math.round((viewport.width - buffer.width * zoom) / 2),
+      offsetY: Math.round((viewport.height - buffer.height * zoom) / 2)
+    });
+  }, [buffer.height, buffer.width, setTransform, viewport.height, viewport.width]);
 
   function toCanvasCoordinate(event: PointerEvent<HTMLCanvasElement> | WheelEvent<HTMLCanvasElement>): Coordinate {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -216,6 +244,7 @@ export function CanvasStage({
 
     if (tool === "LINE" || tool === "RECTANGLE_OUTLINE" || tool === "RECTANGLE_FILLED") {
       dragState.current = { mode: "SHAPE", start: point, last: point };
+      setShapePreview({ start: point, end: point, tool, color: foregroundColor });
     }
   }
 
@@ -224,6 +253,7 @@ export function CanvasStage({
     event.currentTarget.setPointerCapture(event.pointerId);
 
     if (tool === "PAN" || event.button === 1 || event.altKey) {
+      userAdjustedView.current = true;
       dragState.current = {
         mode: "PAN",
         startX: event.clientX,
@@ -250,6 +280,7 @@ export function CanvasStage({
     }
 
     if (current.mode === "PAN") {
+      setShapePreview(null);
       setTransform({
         ...transform,
         offsetX: current.offsetX + event.clientX - current.startX,
@@ -275,12 +306,18 @@ export function CanvasStage({
     }
 
     current.last = point;
+    if (current.mode === "SHAPE") {
+      const previewTool =
+        tool === "LINE" || tool === "RECTANGLE_OUTLINE" || tool === "RECTANGLE_FILLED" ? tool : "LINE";
+      setShapePreview({ start: current.start, end: point, tool: previewTool, color: foregroundColor });
+    }
   }
 
   function handlePointerUp(event: PointerEvent<HTMLCanvasElement>): void {
     event.preventDefault();
     const current = dragState.current;
     dragState.current = null;
+    setShapePreview(null);
 
     if (current === null || current.mode === "PAN") {
       return;
@@ -308,6 +345,7 @@ export function CanvasStage({
 
   function handleWheel(event: WheelEvent<HTMLCanvasElement>): void {
     event.preventDefault();
+    userAdjustedView.current = true;
     const rect = event.currentTarget.getBoundingClientRect();
     const pointer = { x: Math.floor(event.clientX - rect.left), y: Math.floor(event.clientY - rect.top) };
     const direction = event.deltaY > 0 ? -1 : 1;
@@ -351,7 +389,7 @@ export function CanvasStage({
   }, []);
 
   return (
-    <div className="relative min-h-0 flex-1 overflow-hidden bg-slate-900">
+    <div ref={stageRef} className="relative min-h-0 flex-1 overflow-hidden bg-[linear-gradient(135deg,#101827_0%,#111827_46%,#0b1220_100%)]">
       <canvas
         ref={canvasRef}
         aria-label="Pixel canvas"
@@ -365,12 +403,65 @@ export function CanvasStage({
       />
       {remoteCursorNodes}
       {!canEdit ? (
-        <div className="pointer-events-none absolute left-4 top-4 rounded bg-slate-950/90 px-3 py-2 text-sm text-slate-200 ring-1 ring-white/10">
+        <div className="pointer-events-none absolute left-4 top-4 rounded-xl bg-slate-950/[0.88] px-3 py-2 text-sm text-slate-200 shadow-xl shadow-black/30 ring-1 ring-white/10 backdrop-blur-xl">
           Read-only viewer
         </div>
       ) : null}
     </div>
   );
+}
+
+function drawShapePreview(
+  context: CanvasRenderingContext2D,
+  preview: ShapePreview,
+  transform: { offsetX: number; offsetY: number; zoom: number },
+  width: number,
+  height: number
+): void {
+  const points =
+    preview.tool === "LINE"
+      ? linePoints(preview.start, preview.end)
+      : rectanglePoints(preview.start, preview.end, preview.tool === "RECTANGLE_FILLED");
+  const visiblePoints = points.filter((point) => point.x >= 0 && point.y >= 0 && point.x < width && point.y < height);
+
+  context.save();
+  context.globalAlpha = 0.78;
+  context.fillStyle = colorToCanvasCss(preview.color);
+  context.strokeStyle = "rgba(255,255,255,0.72)";
+  context.lineWidth = 1;
+
+  for (const point of visiblePoints) {
+    context.fillRect(
+      transform.offsetX + point.x * transform.zoom,
+      transform.offsetY + point.y * transform.zoom,
+      Math.max(1, transform.zoom),
+      Math.max(1, transform.zoom)
+    );
+  }
+
+  if (visiblePoints.length > 0 && transform.zoom >= 4) {
+    context.beginPath();
+    for (const point of visiblePoints) {
+      context.rect(
+        transform.offsetX + point.x * transform.zoom + 0.5,
+        transform.offsetY + point.y * transform.zoom + 0.5,
+        Math.max(1, transform.zoom) - 1,
+        Math.max(1, transform.zoom) - 1
+      );
+    }
+    context.stroke();
+  }
+
+  context.restore();
+}
+
+function colorToCanvasCss(color: number): string {
+  const red = (color >>> 24) & 0xff;
+  const green = (color >>> 16) & 0xff;
+  const blue = (color >>> 8) & 0xff;
+  const alpha = color & 0xff;
+
+  return `rgba(${red}, ${green}, ${blue}, ${(alpha / 255).toFixed(3)})`;
 }
 
 function drawCheckerboard(context: CanvasRenderingContext2D, width: number, height: number): void {

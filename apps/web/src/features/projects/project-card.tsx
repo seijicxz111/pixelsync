@@ -31,7 +31,7 @@ export function ProjectCard({ project }: { project: DashboardProject }): JSX.Ele
 
           <div className="mb-5 grid grid-cols-3 gap-2">
             {project.canvases.slice(0, 3).map((canvas) => (
-              <div key={canvas.id} className="rounded border border-slate-200 bg-slate-50 p-2 text-xs text-slate-500 dark:border-white/10 dark:bg-white/5">
+              <div key={canvas.id} className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-xs text-slate-500 shadow-sm shadow-slate-950/5 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
                 <div className="font-medium text-slate-800 dark:text-slate-100">{canvas.name}</div>
                 <div>{canvas.width} x {canvas.height}</div>
               </div>

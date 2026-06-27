@@ -39,12 +39,13 @@ export function Toolbar({ canEdit }: { canEdit: boolean }): JSX.Element {
   const toggleGrid = useEditorStore((state) => state.toggleGrid);
 
   return (
-    <aside className="flex gap-1 overflow-x-auto border-b border-white/10 bg-slate-950/95 p-2 lg:w-14 lg:flex-col lg:border-b-0 lg:border-r">
+    <aside className="relative z-30 flex gap-1 overflow-x-auto overflow-y-visible border-b border-white/10 bg-slate-950/95 p-2 shadow-lg shadow-black/20 lg:w-14 lg:flex-col lg:overflow-visible lg:border-b-0 lg:border-r">
       {tools.map(({ tool: item, label, Icon }) => (
-        <Tooltip key={item} label={label}>
+        <Tooltip key={item} label={label} side="right">
           <Button
             aria-label={label}
             aria-pressed={tool === item}
+            className="shrink-0"
             size="icon"
             variant={tool === item ? "primary" : "ghost"}
             disabled={!canEdit && item !== "PAN"}
@@ -55,23 +56,23 @@ export function Toolbar({ canEdit }: { canEdit: boolean }): JSX.Element {
         </Tooltip>
       ))}
       <div className="mx-1 h-9 w-px bg-white/10 lg:mx-0 lg:my-1 lg:h-px lg:w-full" />
-      <Tooltip label="Undo">
-        <Button aria-label="Undo" size="icon" variant="ghost" disabled={!canEdit} onClick={() => window.dispatchEvent(new CustomEvent("pixelsync:undo"))}>
+      <Tooltip label="Undo" side="right">
+        <Button aria-label="Undo" className="shrink-0" size="icon" variant="ghost" disabled={!canEdit} onClick={() => window.dispatchEvent(new CustomEvent("pixelsync:undo"))}>
           <Undo2 size={18} aria-hidden="true" />
         </Button>
       </Tooltip>
-      <Tooltip label="Redo">
-        <Button aria-label="Redo" size="icon" variant="ghost" disabled={!canEdit} onClick={() => window.dispatchEvent(new CustomEvent("pixelsync:redo"))}>
+      <Tooltip label="Redo" side="right">
+        <Button aria-label="Redo" className="shrink-0" size="icon" variant="ghost" disabled={!canEdit} onClick={() => window.dispatchEvent(new CustomEvent("pixelsync:redo"))}>
           <Redo2 size={18} aria-hidden="true" />
         </Button>
       </Tooltip>
-      <Tooltip label="Toggle grid">
-        <Button aria-label="Toggle grid" size="icon" variant="ghost" onClick={toggleGrid}>
+      <Tooltip label="Toggle grid" side="right">
+        <Button aria-label="Toggle grid" className="shrink-0" size="icon" variant="ghost" onClick={toggleGrid}>
           <Grid3X3 size={18} aria-hidden="true" />
         </Button>
       </Tooltip>
-      <Tooltip label="Clear canvas">
-        <Button aria-label="Clear canvas" size="icon" variant="ghost" disabled={!canEdit} onClick={() => window.dispatchEvent(new CustomEvent("pixelsync:clear"))}>
+      <Tooltip label="Clear canvas" side="right">
+        <Button aria-label="Clear canvas" className="shrink-0" size="icon" variant="ghost" disabled={!canEdit} onClick={() => window.dispatchEvent(new CustomEvent("pixelsync:clear"))}>
           <Trash2 size={18} aria-hidden="true" />
         </Button>
       </Tooltip>

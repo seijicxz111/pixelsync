@@ -149,9 +149,9 @@ export function PixelEditor({
 
   return (
     <div className="flex h-screen min-h-0 flex-col overflow-hidden bg-slate-950 text-white">
-      <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-white/10 px-3">
+      <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-slate-950/95 px-3 shadow-sm shadow-black/30 backdrop-blur-xl">
         <div className="flex min-w-0 items-center gap-3">
-          <Link href={`/projects/${projectId}`} className="rounded p-2 text-slate-300 hover:bg-white/10 hover:text-white">
+          <Link href={`/projects/${projectId}`} className="rounded-xl p-2 text-slate-300 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white">
             <ArrowLeft size={18} aria-hidden="true" />
             <span className="sr-only">Back to project</span>
           </Link>
@@ -173,7 +173,7 @@ export function PixelEditor({
         Connection status: {status}
       </div>
       <PresencePanel status={status} users={remoteUsers} />
-      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+      <div className="flex min-h-0 flex-1 flex-col bg-slate-950 lg:flex-row">
         <Toolbar canEdit={canEdit} />
         <div className="relative flex min-h-0 flex-1">
           <CanvasStage

@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation";
-import { canEditProject, type SnapshotEncoding } from "@pixelsync/shared";
+import { canEditProject, canViewProject, type SnapshotEncoding } from "@pixelsync/shared";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { requireProjectView } from "@/lib/authorization";
+import { getProjectAccess } from "@/lib/authorization";
 import { PixelEditor } from "@/features/editor/components/pixel-editor";
 
 export default async function EditorPage({
@@ -15,9 +15,13 @@ export default async function EditorPage({
   const session = await auth();
   const { projectId, canvasId } = await params;
   const { debug } = await searchParams;
-  const access = await requireProjectView(projectId, session?.user?.id ?? null);
+  const access = await getProjectAccess(projectId, session?.user?.id ?? null);
 
-  if (access.role === null && access.visibility !== "PUBLIC") {
+  if (access === null) {
+    notFound();
+  }
+
+  if (!canViewProject(access.role, access.visibility)) {
     redirect("/sign-in");
   }
 

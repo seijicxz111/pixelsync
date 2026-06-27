@@ -43,7 +43,7 @@ export default async function InvitePage({
 
   return (
     <main className="grid min-h-screen place-items-center bg-slate-950 px-4 text-white">
-      <section className="w-full max-w-md rounded-lg border border-white/10 bg-white/[0.04] p-6">
+      <section className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/30">
         <h1 className="text-2xl font-semibold">Join PixelSync project</h1>
         <p className="mt-2 text-sm text-slate-400">Accept this invite to add the project to your dashboard.</p>
         <form action={acceptInvite} className="mt-6">

@@ -10,10 +10,13 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantClass: Record<ButtonVariant, string> = {
   primary:
-    "bg-cyan-400 text-slate-950 shadow-[0_0_0_1px_rgba(34,211,238,0.3)] hover:bg-cyan-300",
-  secondary: "bg-white/10 text-white hover:bg-white/15 border border-white/10",
-  ghost: "text-slate-200 hover:bg-white/10",
-  danger: "bg-red-500 text-white hover:bg-red-400"
+    "border border-cyan-200/40 bg-gradient-to-b from-cyan-300 to-cyan-400 text-slate-950 shadow-[0_10px_28px_rgba(34,211,238,0.18),inset_0_1px_0_rgba(255,255,255,0.45)] hover:from-cyan-200 hover:to-cyan-300",
+  secondary:
+    "border border-slate-200 bg-slate-950/[0.04] text-slate-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] hover:border-slate-300 hover:bg-slate-950/[0.07] hover:text-slate-950 dark:border-white/10 dark:bg-white/[0.08] dark:text-white dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] dark:hover:border-white/[0.18] dark:hover:bg-white/[0.13]",
+  ghost:
+    "text-slate-600 hover:bg-slate-950/[0.06] hover:text-slate-950 dark:text-slate-200 dark:hover:bg-white/10 dark:hover:text-white",
+  danger:
+    "border border-red-300/20 bg-gradient-to-b from-red-500 to-red-600 text-white shadow-[0_10px_26px_rgba(239,68,68,0.18)] hover:from-red-400 hover:to-red-500"
 };
 
 const sizeClass = {
@@ -31,7 +34,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       type={type}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-md font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center gap-2 font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 disabled:pointer-events-none disabled:opacity-50",
+        "rounded-xl transition-all duration-150 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:translate-y-0 disabled:shadow-none",
         variantClass[variant],
         sizeClass[size],
         className

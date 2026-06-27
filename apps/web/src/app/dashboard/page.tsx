@@ -60,7 +60,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         </div>
 
         {items.length === 0 ? (
-          <section className="rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center dark:border-white/10 dark:bg-white/[0.03]">
+          <section className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm shadow-slate-950/5 dark:border-white/10 dark:bg-white/[0.03] dark:shadow-black/20">
             <h2 className="text-lg font-semibold text-slate-950 dark:text-white">No projects yet</h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400">
               Create your first project to start drawing with a versioned collaborative canvas.

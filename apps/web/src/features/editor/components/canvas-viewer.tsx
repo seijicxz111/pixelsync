@@ -24,7 +24,7 @@ export function CanvasViewer({ snapshot, name }: { snapshot: SnapshotEncoding; n
     <canvas
       ref={ref}
       aria-label={name}
-      className="aspect-square w-full rounded border border-white/10 bg-[linear-gradient(45deg,#1e293b_25%,transparent_25%),linear-gradient(-45deg,#1e293b_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1e293b_75%),linear-gradient(-45deg,transparent_75%,#1e293b_75%)] bg-[length:16px_16px]"
+      className="aspect-square w-full rounded-3xl border border-white/10 bg-[linear-gradient(45deg,#1e293b_25%,transparent_25%),linear-gradient(-45deg,#1e293b_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1e293b_75%),linear-gradient(-45deg,transparent_75%,#1e293b_75%)] bg-[length:16px_16px] shadow-2xl shadow-black/30"
     />
   );
 }

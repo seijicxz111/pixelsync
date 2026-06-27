@@ -44,7 +44,7 @@ export function ShareDialog({ projectId }: { projectId: string }): JSX.Element {
               id="invite-role"
               value={role}
               onChange={(event) => setRole(event.target.value as "EDITOR" | "VIEWER")}
-              className="h-10 w-full rounded-md border border-white/10 bg-white/5 px-3 text-sm"
+              className="h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
             >
               <option value="VIEWER">Viewer</option>
               <option value="EDITOR">Editor</option>
@@ -61,6 +61,7 @@ export function ShareDialog({ projectId }: { projectId: string }): JSX.Element {
                 <Button
                   aria-label="Copy invite URL"
                   size="icon"
+                  className="shrink-0"
                   onClick={() => {
                     void navigator.clipboard.writeText(url);
                   }}

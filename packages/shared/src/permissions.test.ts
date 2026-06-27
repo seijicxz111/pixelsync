@@ -4,6 +4,7 @@ import { canEditProject, canManageProject, canViewProject, roleMeets } from "./p
 describe("permission utilities", () => {
   it("allows public viewing without membership", () => {
     expect(canViewProject(null, "PUBLIC")).toBe(true);
+    expect(canViewProject(null, "LINK")).toBe(true);
     expect(canViewProject(null, "PRIVATE")).toBe(false);
   });
 

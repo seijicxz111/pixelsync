@@ -15,15 +15,15 @@ export function DebugPanel({ enabled }: { enabled: boolean }): JSX.Element | nul
   }
 
   return (
-    <aside className="absolute bottom-4 left-4 z-30 rounded bg-slate-950/90 p-3 text-xs text-slate-200 ring-1 ring-white/10">
+    <aside className="absolute bottom-4 left-4 z-30 rounded-2xl bg-slate-950/[0.88] p-3 text-xs text-white shadow-2xl shadow-black/[0.35] ring-1 ring-white/10 backdrop-blur-xl">
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-        <dt>FPS</dt><dd>{fps}</dd>
-        <dt>Latency</dt><dd>{latencyMs} ms</dd>
-        <dt>Users</dt><dd>{connectedUsers}</dd>
-        <dt>Sequence</dt><dd>{sequence}</dd>
-        <dt>Pending</dt><dd>{pending}</dd>
-        <dt>Size</dt><dd>{buffer.width} x {buffer.height}</dd>
-        <dt>Memory</dt><dd>{(approximateMemoryUsage() / 1024).toFixed(1)} KB</dd>
+        <dt>FPS</dt><dd className="text-right font-medium text-white">{fps}</dd>
+        <dt>Latency</dt><dd className="text-right font-medium text-white">{latencyMs} ms</dd>
+        <dt>Users</dt><dd className="text-right font-medium text-white">{connectedUsers}</dd>
+        <dt>Sequence</dt><dd className="text-right font-medium text-white">{sequence}</dd>
+        <dt>Pending</dt><dd className="text-right font-medium text-white">{pending}</dd>
+        <dt>Size</dt><dd className="text-right font-medium text-white">{buffer.width} x {buffer.height}</dd>
+        <dt>Memory</dt><dd className="text-right font-medium text-white">{(approximateMemoryUsage() / 1024).toFixed(1)} KB</dd>
       </dl>
     </aside>
   );

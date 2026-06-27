@@ -13,7 +13,7 @@ const roleRank: Record<ProjectRole, number> = {
 };
 
 export function canViewProject(role: ProjectRole | null, visibility: ProjectVisibility): boolean {
-  return visibility === "PUBLIC" || role !== null;
+  return visibility === "PUBLIC" || visibility === "LINK" || role !== null;
 }
 
 export function canEditProject(role: ProjectRole | null): boolean {

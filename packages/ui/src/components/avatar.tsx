@@ -17,7 +17,10 @@ export function Avatar({ name, imageUrl, color = "#22d3ee", className, ...props 
 
   return (
     <div
-      className={cn("grid size-9 place-items-center overflow-hidden rounded-md text-xs font-semibold text-slate-950", className)}
+      className={cn(
+        "grid size-9 place-items-center overflow-hidden rounded-full text-xs font-semibold text-slate-950 shadow-sm ring-1 ring-white/20",
+        className
+      )}
       style={{ backgroundColor: imageUrl === undefined || imageUrl === null ? color : undefined }}
       {...props}
     >

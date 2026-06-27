@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Clock, ImageIcon, Plus } from "lucide-react";
+import { canViewProject } from "@pixelsync/shared";
 import { AppHeader } from "@/components/app-header";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { requireProjectView } from "@/lib/authorization";
+import { getProjectAccess } from "@/lib/authorization";
 import { ShareDialog } from "@/features/projects/share-dialog";
 import { Button, Card, CardContent } from "@pixelsync/ui";
 
@@ -15,9 +16,13 @@ export default async function ProjectPage({
 }): Promise<JSX.Element> {
   const session = await auth();
   const { projectId } = await params;
-  const access = await requireProjectView(projectId, session?.user?.id ?? null);
+  const access = await getProjectAccess(projectId, session?.user?.id ?? null);
 
-  if (access.role === null && access.visibility !== "PUBLIC") {
+  if (access === null) {
+    notFound();
+  }
+
+  if (!canViewProject(access.role, access.visibility)) {
     redirect("/sign-in");
   }
 
@@ -62,7 +67,7 @@ export default async function ProjectPage({
                 <Link key={canvas.id} href={`/projects/${project.id}/canvases/${canvas.id}`}>
                   <Card className="border-white/10 bg-white/[0.03] text-white transition hover:bg-white/[0.06]">
                     <CardContent>
-                      <div className="mb-4 grid aspect-video place-items-center rounded bg-[linear-gradient(45deg,#1e293b_25%,transparent_25%),linear-gradient(-45deg,#1e293b_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1e293b_75%),linear-gradient(-45deg,transparent_75%,#1e293b_75%)] bg-[length:18px_18px]">
+                      <div className="mb-4 grid aspect-video place-items-center rounded-2xl bg-[linear-gradient(45deg,#1e293b_25%,transparent_25%),linear-gradient(-45deg,#1e293b_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#1e293b_75%),linear-gradient(-45deg,transparent_75%,#1e293b_75%)] bg-[length:18px_18px] shadow-inner shadow-black/30">
                         <ImageIcon className="text-cyan-200" aria-hidden="true" />
                       </div>
                       <h3 className="font-semibold">{canvas.name}</h3>
@@ -82,7 +87,7 @@ export default async function ProjectPage({
                   {project.members.map((member) => (
                     <div key={member.userId} className="flex items-center justify-between text-sm">
                       <span>{member.user.name ?? "Unnamed user"}</span>
-                      <span className="rounded bg-white/10 px-2 py-1 text-xs text-slate-300">{member.role.toLowerCase()}</span>
+                      <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs text-slate-300 ring-1 ring-white/10">{member.role.toLowerCase()}</span>
                     </div>
                   ))}
                 </div>
